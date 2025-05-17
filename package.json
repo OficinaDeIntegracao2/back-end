@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "cors": "2.8.5",
+    "dotenv": "16.4.5",
+    "express": "4.19.2",
+    "glob": "10.3.16",
+    "helmet": "7.1.0",
+    "pino": "9.1.0",
+    "pino-pretty": "11.1.0",
+    "reflect-metadata": "0.2.2",
+    "tsyringe": "4.8.0"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/glob": "8.1.0",
+    "rimraf": "5.0.7",
+    "ts-node-dev": "2.0.0",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.4.5"
+  },
+  "engines": {
+    "node": ">=20.13.1 <=20.13.1"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write"
+  },
+  "main": "dist/main.js",
+  "name": "back-end",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf ./dist",
+    "dev": "ts-node-dev --pretty --respawn --transpile-only -r tsconfig-paths/register ./src/main.ts | pino-pretty"
+  },
+  "version": "1.0.0"
+}
