@@ -32,7 +32,8 @@
     "paths": {
       "@configuration/*": ["./src/configuration/*"],
       "@common/*": ["./src/common/*"],
-      "@resource/*": ["./src/resource/*"],
+      "@controller/*": ["./src/controller/*"],
+      "@service/*": ["./src/service/*"],
       "@router/*": ["./src/router/*"],
       "@util/*": ["./src/util/*"],
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */

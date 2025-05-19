@@ -5,7 +5,7 @@ import RouteConfiguration from "@configuration/route.configuration";
 import { Constant } from "@common/constant.common";
 import { logger } from "@util/logger.util";
 import { container } from "tsyringe";
-import { DatabaseConfiguration } from "@configuration/database.configuration";
+import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 
 
 const main = async () => {
