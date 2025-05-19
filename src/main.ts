@@ -2,16 +2,18 @@ import "reflect-metadata";
 import EnvironmentConfiguration from "@configuration/environment.configuration";
 import ExpressConfiguration from "@configuration/express.configuration";
 import RouteConfiguration from "@configuration/route.configuration";
+import { Constant } from "@common/constant.common";
 import { logger } from "@util/logger.util";
 import { container } from "tsyringe";
+import { DatabaseConfiguration } from "@configuration/database.configuration";
 
-const SERVER_PORT = "SERVER_PORT";
 
 const main = async () => {
   const environmentConfiguration = container.resolve(EnvironmentConfiguration);
   const expressApplication = container.resolve(ExpressConfiguration).getExpressApplication();
+  container.resolve(DatabaseConfiguration);
   container.resolve(RouteConfiguration);
-  const port = environmentConfiguration.getIntValue(SERVER_PORT);
+  const port = environmentConfiguration.getIntValue(Constant.SERVER_PORT);
   expressApplication.listen(port, () => {
     logger.info(`Server is listening on port ${port}`);
   });
