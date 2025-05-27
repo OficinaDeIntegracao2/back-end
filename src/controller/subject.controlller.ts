@@ -25,9 +25,29 @@ export class SubjectController {
   };
 
   getById = async (request: Request, response: Response): Promise<Response> => {
-    const { id } = request.params;
-    const { subject, error } = await this.subjectService.getById(id);
+    const { subjectId } = request.params;
+    const { subject, error } = await this.subjectService.getById(subjectId);
     if (error) return response.status(HttpStatus.NOT_FOUND).send({ error: error.message });
     return response.status(HttpStatus.OK).send(subject);
   };
+
+  // TODO: refactor totalHours
+  updateById = async (request: Request, response: Response): Promise<Response> => {
+    const { subjectId } = request.params;
+    const { name, description, weekdays, startTime, endTime, totalHours, durationWeeks } = request.body;
+    const { error } = await this.subjectService.updateById(
+      subjectId,
+      {
+        name,
+        description,
+        weekdays,
+        startTime,
+        endTime,
+        totalHours,
+        durationWeeks
+      }
+    );
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
+    return response.status(HttpStatus.NO_CONTENT).send();
+  }
 }
