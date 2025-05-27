@@ -13,11 +13,13 @@ export default class SubjectRouter implements Router {
 
   get = (): express.Router => {
     const router = express.Router();
-    router.get("/:id", this.authorizationMiddleware.authorize(["PROFESSOR", "VOLUNTEER"]), this.subjectController.getById);
+    router.post("/", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.subjectController.create);
+    router.get("/:subjectId", this.authorizationMiddleware.authorize(["PROFESSOR", "VOLUNTEER"]), this.subjectController.getById);
+    router.patch("/:subjectId", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.subjectController.updateById);
     return router;
   }
 
   path = (): string => {
-    return "/api/subjects";
+    return "/api/users/professors/:professorId/subjects";
   }
 }
