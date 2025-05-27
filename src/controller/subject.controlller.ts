@@ -33,10 +33,11 @@ export class SubjectController {
 
   // TODO: refactor totalHours
   updateById = async (request: Request, response: Response): Promise<Response> => {
-    const { subjectId } = request.params;
+    const { professorId, subjectId } = request.params;
     const { name, description, weekdays, startTime, endTime, totalHours, durationWeeks } = request.body;
     const { error } = await this.subjectService.updateById(
       subjectId,
+      professorId,
       {
         name,
         description,

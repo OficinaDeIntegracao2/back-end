@@ -10,7 +10,8 @@ interface SubjectOutput {
   error?: Error;
 }
 
-interface UpdateSubjectOutput {
+//TODO: refactor name
+interface NoSubjectOutput {
   error?: Error;
 }
 
@@ -64,14 +65,14 @@ export class SubjectService {
     }
   }
 
-  updateById = async (id: string, input: Prisma.SubjectUpdateInput): Promise<UpdateSubjectOutput> => {
+  updateById = async (subjectId: string, professorId: string, input: Prisma.SubjectUpdateInput): Promise<NoSubjectOutput> => {
     try {
       const subjectExists = await this.prisma.subject.findUnique({
-        where: { id },
+        where: { id: subjectId, professorId },
       });
-      if (!subjectExists) return { error: new SubjectNotFoundError(id) };
+      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
       await this.prisma.subject.update({
-        where: { id },
+        where: { id: subjectId, professorId},
         data: input,
       });
       return {};
