@@ -17,7 +17,7 @@ export default class UserRouter implements Router {
     const router = express.Router()
     router.post("/professor", this.authorizationMiddleware.authorize(["ADMIN"]), this.userController.createProfessor);
     router.post("/volunteer", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.userController.createVolunteer);
-    router.post("/professor/:professorId/subject", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.subjectController.createSubject);
+    router.post("/professor/:professorId/subject", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.subjectController.create);
     return router;
   }
 
