@@ -4,7 +4,7 @@ import Router from "./router";
 import AuthenticationController from "@controller/authentication.controller";
 
 @injectable()
-export default class HealthCheckRouter implements Router {
+export default class AuthenticationRouter implements Router {
   constructor(private readonly authenticationController: AuthenticationController) {}
 
   get = (): express.Router => {
