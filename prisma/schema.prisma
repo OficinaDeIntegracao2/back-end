@@ -61,7 +61,7 @@ model Student {
 
 model Subject {
   id            String        @id @default(uuid())
-  name          String
+  name          String        @unique
   description   String
   weekdays      String
   startTime     String        @map("start_time")
