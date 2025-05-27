@@ -81,4 +81,20 @@ export class SubjectService {
       return { error: error };
     }
   }
+
+  deleteById = async (subjectId: string, professorId: string): Promise<NoSubjectOutput> => {
+    try {
+      const subjectExists = await this.prisma.subject.findUnique({
+        where: { id: subjectId, professorId },
+      });
+      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
+      await this.prisma.subject.delete({
+        where: { id: subjectId, professorId },
+      });
+      return {};
+    } catch (error: any) {
+      console.error(`Could not delete subject: ${error.message}`);
+      return { error: error };
+    }
+  }
 }

@@ -18,6 +18,7 @@ export default class SubjectRouter implements Router {
     router.post("/", this.authorizationMiddleware.authorize(["PROFESSOR"]), this.subjectController.create);
     router.get("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR", "VOLUNTEER"]), this.subjectController.getById);
     router.patch("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.ensureSameProfessorOrAdminMiddleware.validate(), this.subjectController.updateById);
+    router.delete("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.ensureSameProfessorOrAdminMiddleware.validate(), this.subjectController.deleteById);
     return router;
   }
 

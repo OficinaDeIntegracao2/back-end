@@ -51,4 +51,11 @@ export class SubjectController {
     if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
     return response.status(HttpStatus.NO_CONTENT).send();
   }
+
+  deleteById = async (request: Request, response: Response): Promise<Response> => {
+    const { professorId, subjectId } = request.params;
+    const { error } = await this.subjectService.deleteById(subjectId, professorId);
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
+    return response.status(HttpStatus.NO_CONTENT).send();
+  };
 }
