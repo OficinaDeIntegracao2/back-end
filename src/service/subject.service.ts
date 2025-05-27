@@ -1,10 +1,11 @@
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { PrismaClient } from "@prisma/client";
 import { injectable } from "tsyringe";
-import SubjectAlreadyExistsError from "./error/subject-already-exists.error";
 import { CreatedSubjectDto } from "./dto/created-subject.dto";
+import SubjectNotFoundError from "./error/subject-not-found.error";
+import SubjectAlreadyExistsError from "./error/subject-already-exists.error";
 
-interface CreateSubjectOutput {
+interface SubjectOutput {
   subject?: CreatedSubjectDto;
   error?: Error;
 }
@@ -18,7 +19,7 @@ export class SubjectService {
       this.prisma = this.databaseConfiguration.getClient();
     }
 
-  createSubject = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, totalHours: number, durationWeeks: string): Promise<CreateSubjectOutput> => {
+  create = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, totalHours: number, durationWeeks: string): Promise<SubjectOutput> => {
     try {
       const existingSubject = await this.prisma.subject.findUnique({
         where: { name },
@@ -42,6 +43,19 @@ export class SubjectService {
       });
     } catch (error: any) {
       console.error(`Could not create subject: ${error.message}`);
+      return { error: error };
+    }
+  }
+
+  getById = async (id: string): Promise<SubjectOutput> => {
+    try {
+      const subject = await this.prisma.subject.findUnique({
+        where: { id },
+      });
+      if (!subject) return { error: new SubjectNotFoundError(id) };
+      return { subject: new CreatedSubjectDto(subject.id, subject.name, subject.professorId, subject.description) };
+    } catch (error: any) {
+      console.error(`Could not retrieve subject: ${error.message}`);
       return { error: error };
     }
   }
