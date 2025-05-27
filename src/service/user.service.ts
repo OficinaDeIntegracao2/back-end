@@ -5,7 +5,6 @@ import { CreatedUserDto } from "./dto/created-user.dto";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { logger } from "@util/logger.util";
 import bcrypt from "bcrypt";
-import InvalidIdError from "./error/invalid-id.error";
 
 interface CreateProfessorOutput {
   professor?: CreatedUserDto;
