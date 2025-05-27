@@ -14,6 +14,7 @@ export default class HealthCheckRouter implements Router {
   get = (): express.Router => {
     const router = express.Router()
     router.post("/professor", this.authorizationMiddleware.authorize(["ADMIN"]), this.userController.createProfessor);
+    router.post("/volunteer", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.userController.createVolunteer);
     return router;
   }
 
