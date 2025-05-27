@@ -31,9 +31,12 @@ export class UserService {
           email,
           password: hashedPassword,
           role: "PROFESSOR",
+          professor: {
+            create: {}
+          }
         },
       }).then((user) => {
-        return { professor: new CreatedUserDto(user.id, user.email, user.name, user.createdAt,) };
+        return { professor: new CreatedUserDto(user.id, user.name, user.role, user.createdAt) };
       });
     } catch (error: any) {
       logger.error(`Could not create user: ${error.message}`);

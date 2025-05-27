@@ -1,14 +1,14 @@
 // delete this?
 export class CreatedUserDto {
   id: string;
-  email: string;
   name: string;
+  role: string;
   createdAt: Date;
 
-  constructor(id: string, email: string, name: string, createdAt: Date) {
+  constructor(id: string, name: string, role: string,  createdAt: Date) {
     this.id = id;
-    this.email = email;
     this.name = name;
+    this.role = role;
     this.createdAt = createdAt;
   }
 } 
