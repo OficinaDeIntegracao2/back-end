@@ -1,5 +1,5 @@
 export default class InvalidIdError extends Error {
-  constructor(environmentVaribale: string) {
-    super(`${InvalidIdError.name}: id '${environmentVaribale}' is not valid`);
+  constructor(id: string) {
+    super(`${InvalidIdError.name}: id '${id}' is not valid`);
   }
 }

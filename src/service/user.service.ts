@@ -5,7 +5,6 @@ import { CreatedUserDto } from "./dto/created-user.dto";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { logger } from "@util/logger.util";
 import bcrypt from "bcrypt";
-import InvalidIdError from "./error/invalid-id.error";
 
 interface CreateProfessorOutput {
   professor?: CreatedUserDto;
@@ -52,10 +51,10 @@ export class UserService {
 
   createVolunteer = async (professorId: string, name: string, email: string, password: string): Promise<CreateVolunteerOutput> => {
     try {
-      const isValidProfessor = await this.prisma.professor.findUnique({
-        where: { id: professorId },
-      });
-      if (!isValidProfessor) return { error: new InvalidIdError(professorId) };
+      // const isValidProfessor = await this.prisma.professor.findUnique({
+      //   where: { id: professorId },
+      // });
+      // if (!isValidProfessor) return { error: new InvalidIdError(professorId) };
       const existingUser = await this.prisma.user.findUnique({
         where: { email },
       });

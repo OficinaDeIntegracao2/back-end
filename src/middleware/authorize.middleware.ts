@@ -19,7 +19,7 @@ export default class AuthorizeMiddleware {
         const decoded = jwt.verify(token, secret) as { sub: string; role: Role };
         if (!allowedRoles.includes(decoded.role)) return response.status(403).send({ error: "Forbidden" });
         request.user = { id: decoded.sub, role: decoded.role };
-        next();
+        return next();
       } catch (error) {
         return response.status(401).send({ error: "Invalid token" });
       }
