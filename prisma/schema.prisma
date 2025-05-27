@@ -29,7 +29,7 @@ model User {
 
 model Professor {
   id          String        @id @default(uuid())
-  user        User          @relation(fields: [id], references: [id])
+  user        User          @relation(fields: [id], references: [id], onDelete: Cascade)
   subjects    Subject[]
   volunteers  Volunteer[]
   certificate Certificate[]
@@ -39,8 +39,8 @@ model Professor {
 
 model Volunteer {
   id          String       @id @default(uuid())
-  user        User         @relation(fields: [id], references: [id])
-  professor   Professor    @relation(fields: [professorId], references: [id])
+  user        User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  professor   Professor    @relation(fields: [professorId], references: [id], onDelete: Cascade)
   professorId String       @map("professor_id")
   hourLogs    HourLog[]
   hourChanges HourChange[]
@@ -68,7 +68,7 @@ model Subject {
   endTime       String        @map("end_time")
   durationWeeks String        @map("duration_weeks")
   totalHours    Float         @map("total_hours")
-  professor     Professor     @relation(fields: [professorId], references: [id])
+  professor     Professor     @relation(fields: [professorId], references: [id], onDelete: Cascade)
   professorId   String        @map("professor_id")
   enrollments   Enrollment[]
   hourLogs      HourLog[]
@@ -80,9 +80,9 @@ model Subject {
 }
 
 model Enrollment {
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId String  @map("student_id")
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   subjectId String  @map("subject_id")
 
   @@id([studentId, subjectId])
@@ -91,13 +91,13 @@ model Enrollment {
 
 model HourLog {
   id         String       @id @default(uuid())
-  student    Student      @relation(fields: [studentId], references: [id])
+  student    Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId  String       @map("student_id")
-  subject    Subject      @relation(fields: [subjectId], references: [id])
+  subject    Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   subjectId  String       @map("subject_id")
   hours      Float
   date       DateTime
-  loggedBy   Volunteer    @relation(fields: [loggedById], references: [id])
+  loggedBy   Volunteer    @relation(fields: [loggedById], references: [id], onDelete: Cascade)
   loggedById String       @map("logged_by_id")
   changes    HourChange[]
 
@@ -106,12 +106,12 @@ model HourLog {
 
 model HourChange {
   id            String    @id @default(uuid())
-  hourLog       HourLog   @relation(fields: [hourLogId], references: [id])
+  hourLog       HourLog   @relation(fields: [hourLogId], references: [id], onDelete: Cascade)
   hourLogId     String    @map("hour_log_id")
   previousHours Float     @map("previous_hours")
   newHours      Float     @map("new_hours")
   changedAt     DateTime  @default(now()) @map("changed_at")
-  changedBy     Volunteer @relation(fields: [changedById], references: [id])
+  changedBy     Volunteer @relation(fields: [changedById], references: [id], onDelete: Cascade)
   changedById   String    @map("changed_by_id")
 
   @@map("hour_changes")
@@ -119,13 +119,13 @@ model HourChange {
 
 model Certificate {
   id          String    @id @default(uuid())
-  student     Student   @relation(fields: [studentId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId   String    @map("student_id")
-  subject     Subject   @relation(fields: [subjectId], references: [id])
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   subjectId   String    @map("subject_id")
   totalHours  Float     @map("total_hours")
   issuedAt    DateTime  @default(now()) @map("issued_at")
-  professor   Professor @relation(fields: [professorId], references: [id])
+  professor   Professor @relation(fields: [professorId], references: [id], onDelete: Cascade)
   professorId String    @map("professor_id")
 
   @@map("certificates")
