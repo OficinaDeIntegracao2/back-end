@@ -20,4 +20,11 @@ export default class UserController {
     if (error) return response.status(HttpStatus.BAD_REQUEST).send({error: error.message});
     return response.status(HttpStatus.CREATED).send(volunteer);
   }
+
+  getUsersByRole = async (request: Request, response: Response): Promise<Response> => {
+    const { role } = request.params;
+    const { users, error } = await this.userService.getUsersByRole(role);
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({error: error.message});
+    return response.status(HttpStatus.OK).send({users});
+  }
 }
