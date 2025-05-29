@@ -27,4 +27,11 @@ export default class UserController {
     if (error) return response.status(HttpStatus.BAD_REQUEST).send({error: error.message});
     return response.status(HttpStatus.OK).send({users});
   }
+
+  getProfessorById = async (request: Request, response: Response): Promise<Response> => {
+    const { professorId } = request.params;
+    const { professor, error } = await this.userService.getProfessorById(professorId);
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({error: error.message});
+    return response.status(HttpStatus.OK).send({professor});
+  }
 }
