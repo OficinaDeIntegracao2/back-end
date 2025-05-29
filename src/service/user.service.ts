@@ -5,7 +5,6 @@ import { CreatedUserDto } from "./dto/created-user.dto";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { logger } from "@util/logger.util";
 import bcrypt from "bcrypt";
-import ProfessorNotFoundError from "./error/professor-not-found.error";
 
 interface CreateProfessorOutput {
   professor?: CreatedUserDto;
@@ -50,12 +49,8 @@ export class UserService {
     }
   };
 
-  createVolunteer = async (professorId: string, name: string, email: string, password: string): Promise<CreateVolunteerOutput> => {
+  createVolunteer = async (name: string, email: string, password: string): Promise<CreateVolunteerOutput> => {
     try {
-      const existingProfessor = await this.prisma.professor.findUnique({
-        where: { id: professorId },
-      });
-      if (!existingProfessor) return { error: new ProfessorNotFoundError(professorId) };
       const existingUser = await this.prisma.user.findUnique({
         where: { email },
       });
@@ -68,9 +63,7 @@ export class UserService {
           password: hashedPassword,
           role: Role.VOLUNTEER,
           volunteer: {
-            create: {
-              professorId,
-            }
+            create: {}
           }
         },
       }).then((user) => {
