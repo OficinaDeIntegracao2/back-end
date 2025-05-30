@@ -15,4 +15,12 @@ export default class ParticipantController {
       return response.status(HttpStatus.CREATED).send();
   }
 
+  associateStudent = async (request: Request, response: Response): Promise<Response> => {
+      const { name, email } = request.body;
+      const { professorId, subjectId } = request.params;
+      const { error } = await this.participantService.associateStudent(professorId, subjectId, name, email);
+      if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
+      return response.status(HttpStatus.CREATED).send();
+  }
+
 }
