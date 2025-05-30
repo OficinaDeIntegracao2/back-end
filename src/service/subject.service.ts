@@ -4,9 +4,20 @@ import { injectable } from "tsyringe";
 import { CreatedSubjectDto } from "./dto/created-subject.dto";
 import SubjectNotFoundError from "./error/subject-not-found.error";
 import SubjectAlreadyExistsError from "./error/subject-already-exists.error";
+import { SubjectOutputDto } from "./dto/subject-output.dto";
 
-interface SubjectOutput {
+interface CreateOutput {
   subject?: CreatedSubjectDto;
+  error?: Error;
+}
+
+interface GetByIdOutput {
+  subject?: SubjectOutputDto;
+  error?: Error;
+}
+
+interface GetAllProfessorSubjectsOutput {
+  subjects?: CreatedSubjectDto[] | string;
   error?: Error;
 }
 
@@ -24,7 +35,7 @@ export class SubjectService {
       this.prisma = this.databaseConfiguration.getClient();
     }
 
-  create = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, totalHours: number, durationWeeks: string): Promise<SubjectOutput> => {
+  create = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, totalHours: number, durationWeeks: string): Promise<CreateOutput> => {
     try {
       const existingSubject = await this.prisma.subject.findUnique({
         where: { name },
@@ -52,13 +63,59 @@ export class SubjectService {
     }
   }
 
-  getById = async (id: string): Promise<SubjectOutput> => {
+  getAllProfessorSubjects = async (professorId: string): Promise<GetAllProfessorSubjectsOutput> => {
+    try {
+      const subjects = await this.prisma.subject.findMany({
+        where: { professorId },
+      });
+      if (!subjects || subjects.length === 0) return { subjects: 'Professor has no subjects' };
+      return { subjects: subjects.map(subject => new CreatedSubjectDto(subject.id, subject.name, subject.professorId, subject.description)) };
+    } catch (error: any) {
+      console.error(`Could not retrieve subjects for professor ${professorId}: ${error.message}`);
+      return { error: error };
+    }
+  }
+
+  getById = async (professorId: string, subjectId: string): Promise<GetByIdOutput> => {
     try {
       const subject = await this.prisma.subject.findUnique({
-        where: { id },
+        where: { id: subjectId, professorId },
+        include: {
+          professor: {
+            include: {
+              user: true
+            }
+          },
+          volunteers: {
+            include: {
+              volunteer: {
+                select: {
+                  user: true,
+                }
+              },
+            },
+          },
+        },
       });
-      if (!subject) return { error: new SubjectNotFoundError(id) };
-      return { subject: new CreatedSubjectDto(subject.id, subject.name, subject.professorId, subject.description) };
+      if (!subject) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      return { subject: new SubjectOutputDto(
+        subject.id,
+        subject.name,
+        subject.description,
+        subject.totalHours,
+        subject.weekdays,
+        subject.startTime,
+        subject.endTime,
+        subject.durationWeeks,
+        {
+          id: subject.professor.user.id,
+          name: subject.professor.user.name,
+        },
+        subject.volunteers.map(volunteer => ({
+          id: volunteer.volunteer.user.id,
+          name: volunteer.volunteer.user.name,
+        })) ?? [],
+      )};
     } catch (error: any) {
       console.error(`Could not retrieve subject: ${error.message}`);
       return { error: error };
@@ -70,7 +127,7 @@ export class SubjectService {
       const subjectExists = await this.prisma.subject.findUnique({
         where: { id: subjectId, professorId },
       });
-      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
+      if (!subjectExists) return { error: new SubjectNotFoundError(professorId, subjectId) };
       await this.prisma.subject.update({
         where: { id: subjectId, professorId},
         data: input,
@@ -87,7 +144,7 @@ export class SubjectService {
       const subjectExists = await this.prisma.subject.findUnique({
         where: { id: subjectId, professorId },
       });
-      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
+      if (!subjectExists) return { error: new SubjectNotFoundError(professorId, subjectId) };
       await this.prisma.subject.delete({
         where: { id: subjectId, professorId },
       });
