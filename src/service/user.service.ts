@@ -2,11 +2,12 @@ import { PrismaClient, Role } from "@prisma/client";
 import { injectable } from "tsyringe";
 import UserAlreadyExistsError from "./error/user-already-exists.error";
 import { CreatedUserDto } from "./dto/created-user.dto";
-import { ProfessorOutputDto } from "./dto/professor-output.dto";
+import { UserOutputDto } from "./dto/user-output.dto";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { logger } from "@util/logger.util";
 import bcrypt from "bcrypt";
 import ProfessorNotFoundError from "./error/professor-not-found.error";
+import VolunteerNotFoundError from "./error/volunteer-not-found.error";
 
 interface CreateProfessorOutput {
   professor?: CreatedUserDto;
@@ -24,7 +25,12 @@ interface GetUsersByRoleOutput {
 }
 
 interface GetProfessorByIdOutput {
-  professor?: ProfessorOutputDto;
+  professor?: UserOutputDto;
+  error?: Error;
+}
+
+interface GetVolunteerByIdOutput {
+  volunteer?: UserOutputDto;
   error?: Error;
 }
 
@@ -109,7 +115,7 @@ export class UserService {
       });
       if (!professor) return { error: new ProfessorNotFoundError(id) };
       return {
-        professor: new ProfessorOutputDto(
+        professor: new UserOutputDto(
           professor.user.id,
           professor.user.name,
           professor.user.email,
@@ -125,6 +131,48 @@ export class UserService {
       };
     } catch (error: any) {
       logger.error(`Could not retrieve professor by id: ${error.message}`);
+      return { error: error };
+    }
+  }
+
+  getVolunteerById = async (id: string): Promise<GetVolunteerByIdOutput> => {
+    try {
+      const volunteer = await this.prisma.volunteer.findUnique({
+        where: { id },
+        include: { 
+          user: true, 
+          subjects: {
+            include: {
+              subject: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                  totalHours: true,
+                },
+              },
+            },
+          }, 
+        },
+      });
+      if (!volunteer) return { error: new VolunteerNotFoundError(id) };
+      return {
+        volunteer: new UserOutputDto(
+          volunteer.user.id,
+          volunteer.user.name,
+          volunteer.user.email,
+          volunteer.user.role,
+          volunteer.user.createdAt,
+          volunteer.subjects?.map((subject) => ({
+            id: subject.subject.id,
+            name: subject.subject.name,
+            description: subject.subject.description, 
+            totalHours: subject.subject.totalHours,
+          })) ?? []
+        ),
+      };
+    } catch (error: any) {
+      logger.error(`Could not retrieve volunteer by id: ${error.message}`);
       return { error: error };
     }
   }

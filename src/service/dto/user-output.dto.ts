@@ -1,10 +1,10 @@
-export class ProfessorOutputDto {
+export class UserOutputDto {
   id: string;
   name: string;
   email: string;
   role: string;
+  subjects: UserOutputDto.SubjectSummary[];
   createdAt: Date;
-  subjects: ProfessorOutputDto.SubjectSummary[];
 
   constructor(
     id: string,
@@ -12,7 +12,7 @@ export class ProfessorOutputDto {
     email: string,
     role: string,
     createdAt: Date,
-    subjects: ProfessorOutputDto.SubjectSummary[]
+    subjects: UserOutputDto.SubjectSummary[]
   ) {
     this.id = id;
     this.name = name;
@@ -23,7 +23,7 @@ export class ProfessorOutputDto {
   }
 }
 
- namespace ProfessorOutputDto {
+ namespace UserOutputDto {
   export type SubjectSummary = {
     id: string;
     name: string;
