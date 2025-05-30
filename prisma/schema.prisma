@@ -49,7 +49,7 @@ model Volunteer {
 model Student {
   id           String        @id @default(uuid())
   name         String
-  email        String?
+  email        String        @unique
   enrollments  Enrollment[]
   hourLogs     HourLog[]
   certificates Certificate[]
@@ -90,10 +90,11 @@ model VolunteerToSubject {
 }
 
 model Enrollment {
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId String  @map("student_id")
-  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  subjectId String  @map("subject_id")
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String   @map("student_id")
+  subject    Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId  String   @map("subject_id")
+  assignedAt DateTime @default(now()) @map("assigned_at")
 
   @@id([studentId, subjectId])
   @@map("enrollments")
