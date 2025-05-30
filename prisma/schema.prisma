@@ -37,10 +37,11 @@ model Professor {
 }
 
 model Volunteer {
-  id          String       @id @default(uuid())
-  user        User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  id          String               @id @default(uuid())
+  user        User                 @relation(fields: [id], references: [id], onDelete: Cascade)
   hourLogs    HourLog[]
   hourChanges HourChange[]
+  subjects    VolunteerToSubject[]
 
   @@map("volunteers")
 }
@@ -57,23 +58,35 @@ model Student {
 }
 
 model Subject {
-  id            String        @id @default(uuid())
-  name          String        @unique
+  id            String               @id @default(uuid())
+  name          String               @unique
   description   String
   weekdays      String
-  startTime     String        @map("start_time")
-  endTime       String        @map("end_time")
-  durationWeeks String        @map("duration_weeks")
-  totalHours    Float         @map("total_hours")
-  professor     Professor     @relation(fields: [professorId], references: [id], onDelete: Cascade)
-  professorId   String        @map("professor_id")
+  startTime     String               @map("start_time")
+  endTime       String               @map("end_time")
+  durationWeeks String               @map("duration_weeks")
+  totalHours    Float                @map("total_hours")
+  professor     Professor            @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  professorId   String               @map("professor_id")
   enrollments   Enrollment[]
   hourLogs      HourLog[]
   certificates  Certificate[]
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @updatedAt @map("updated_at")
+  volunteers    VolunteerToSubject[]
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
 
   @@map("subjects")
+}
+
+model VolunteerToSubject {
+  volunteer   Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  volunteerId String
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subjectId   String
+  assignedAt  DateTime  @default(now()) @map("assigned_at")
+
+  @@id([volunteerId, subjectId])
+  @@map("volunteers_to_subjects")
 }
 
 model Enrollment {
