@@ -1,5 +1,5 @@
 export default class SubjectNotFoundError extends Error {
-  constructor(id: string) {
-    super(`${SubjectNotFoundError.name}: subject with id '${id}' not found`);
+  constructor(professorId: string, subjectId: string) {
+    super(`${SubjectNotFoundError.name}: professor ${professorId} does not have a subject with id ${subjectId}`);
   }
 }

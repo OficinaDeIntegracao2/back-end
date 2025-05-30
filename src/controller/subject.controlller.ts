@@ -24,11 +24,18 @@ export class SubjectController {
     return response.status(HttpStatus.CREATED).send(subject);
   };
 
+  getAllProfessorSubjects = async (request: Request, response: Response): Promise<Response> => {
+    const { professorId } = request.params;
+    const { subjects, error } = await this.subjectService.getAllProfessorSubjects(professorId);
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
+    return response.status(HttpStatus.OK).send({subjects});
+  };
+
   getById = async (request: Request, response: Response): Promise<Response> => {
-    const { subjectId } = request.params;
-    const { subject, error } = await this.subjectService.getById(subjectId);
-    if (error) return response.status(HttpStatus.NOT_FOUND).send({ error: error.message });
-    return response.status(HttpStatus.OK).send(subject);
+    const { professorId, subjectId } = request.params;
+    const { subject, error } = await this.subjectService.getById(professorId, subjectId);
+    if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
+    return response.status(HttpStatus.OK).send({subject});
   };
 
   // TODO: refactor totalHours
@@ -49,13 +56,13 @@ export class SubjectController {
       }
     );
     if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
-    return response.status(HttpStatus.NO_CONTENT).send();
+    return response.status(HttpStatus.OK).send();
   }
 
   deleteById = async (request: Request, response: Response): Promise<Response> => {
     const { professorId, subjectId } = request.params;
     const { error } = await this.subjectService.deleteById(subjectId, professorId);
     if (error) return response.status(HttpStatus.BAD_REQUEST).send({ error: error.message });
-    return response.status(HttpStatus.NO_CONTENT).send();
+    return response.status(HttpStatus.OK).send();
   };
 }
