@@ -41,9 +41,11 @@
   "main": "dist/main.js",
   "name": "back-end",
   "scripts": {
+    "setup": "npx prisma migrate dev && npx prisma generate",
     "build": "tsc",
     "clean": "rimraf ./dist",
     "dev": "ts-node-dev --pretty --respawn --transpile-only -r tsconfig-paths/register ./src/start.ts | pino-pretty",
+    "start:dev": "npm run setup && npm run dev",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
