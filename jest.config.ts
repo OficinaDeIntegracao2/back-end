@@ -9,6 +9,9 @@ const config: Config = {
   '^@configuration/(.*)$': '<rootDir>/src/configuration/$1',
   '^@util/(.*)$': '<rootDir>/src/util/$1',
   '^@common/(.*)$': '<rootDir>/src/common/$1',
+  '^@controller/(.*)$': '<rootDir>/src/controller/$1',
+  '^@service/(.*)$': '<rootDir>/src/service/$1',
+  '^@router/(.*)$': '<rootDir>/src/router/$1',
 },
 };
 

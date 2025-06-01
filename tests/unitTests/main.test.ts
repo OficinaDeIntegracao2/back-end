@@ -23,7 +23,7 @@ jest.mock('tsyringe', () => {
           case 'SwaggerConfiguration':
             return { setup: mockSetup };
           default:
-            throw new Error(`Classe não mockada: ${cls.name}`);
+            throw new Error(`Class without mock: ${cls.name}`);
         }
       },
     },
