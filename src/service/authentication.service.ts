@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { injectable } from "tsyringe";
 import jwt from "jsonwebtoken";
-import { CreatedUserDto } from "./dto/created-user.dto";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import { logger } from "@util/logger.util";
 import BadCredentialsError from "./error/bad-credentials.error";
