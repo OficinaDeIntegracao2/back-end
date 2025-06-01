@@ -39,19 +39,12 @@
 
 /**
  * @swagger
- * /api/users/professors/{professorId}/volunteers:
+ * /api/users/volunteers:
  *   post:
  *     summary: Cria um novo aluno voluntário vinculado a um professor
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: professorId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do professor responsável
  *     requestBody:
  *       required: true
  *       content:
