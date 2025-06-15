@@ -9,7 +9,7 @@ import { DatabaseConfiguration } from "@configuration/database/database.configur
 import SwaggerConfiguration from "@configuration/swagger.configuration";
 
 
-const main = async () => {
+export const main = async () => {
   const environmentConfiguration = container.resolve(EnvironmentConfiguration);
   const expressApplication = container.resolve(ExpressConfiguration).getExpressApplication();
   container.resolve(DatabaseConfiguration);
@@ -20,5 +20,3 @@ const main = async () => {
     logger.info(`Server is listening on port ${port}`);
   });
 }
-
-main();

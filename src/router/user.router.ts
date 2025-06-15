@@ -7,6 +7,7 @@ import EnsureSameUserOrAdminMiddleware from "../middleware/ensure-same-user-or-a
 
 @injectable()
 export default class UserRouter implements Router {
+
   constructor(
     private readonly userController: UserController,
     private readonly authorizationMiddleware: AuthorizeMiddleware,
