@@ -14,15 +14,17 @@ enum Role {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  password  String
-  role      Role
-  professor Professor?
-  volunteer Volunteer?
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  password   String
+  role       Role
+  professor  Professor?
+  volunteer  Volunteer?
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  HourLog    HourLog[]
+  HourChange HourChange[]
 
   @@map("users")
 }
@@ -37,11 +39,9 @@ model Professor {
 }
 
 model Volunteer {
-  id          String               @id @default(uuid())
-  user        User                 @relation(fields: [id], references: [id], onDelete: Cascade)
-  hourLogs    HourLog[]
-  hourChanges HourChange[]
-  subjects    VolunteerToSubject[]
+  id       String               @id @default(uuid())
+  user     User                 @relation(fields: [id], references: [id], onDelete: Cascade)
+  subjects VolunteerToSubject[]
 
   @@map("volunteers")
 }
@@ -65,7 +65,6 @@ model Subject {
   startTime     String               @map("start_time")
   endTime       String               @map("end_time")
   durationWeeks String               @map("duration_weeks")
-  totalHours    Float                @map("total_hours")
   professor     Professor            @relation(fields: [professorId], references: [id], onDelete: Cascade)
   professorId   String               @map("professor_id")
   enrollments   Enrollment[]
@@ -106,24 +105,24 @@ model HourLog {
   studentId  String       @map("student_id")
   subject    Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   subjectId  String       @map("subject_id")
-  hours      Float
-  date       DateTime
-  loggedBy   Volunteer    @relation(fields: [loggedById], references: [id], onDelete: Cascade)
+  attendedAt DateTime
+  loggedBy   User         @relation(fields: [loggedById], references: [id], onDelete: Cascade)
   loggedById String       @map("logged_by_id")
   changes    HourChange[]
+  createdAt  DateTime     @default(now()) @map("created_at")
 
   @@map("hour_logs")
 }
 
 model HourChange {
-  id            String    @id @default(uuid())
-  hourLog       HourLog   @relation(fields: [hourLogId], references: [id], onDelete: Cascade)
-  hourLogId     String    @map("hour_log_id")
-  previousHours Float     @map("previous_hours")
-  newHours      Float     @map("new_hours")
-  changedAt     DateTime  @default(now()) @map("changed_at")
-  changedBy     Volunteer @relation(fields: [changedById], references: [id], onDelete: Cascade)
-  changedById   String    @map("changed_by_id")
+  id            String   @id @default(uuid())
+  hourLog       HourLog  @relation(fields: [hourLogId], references: [id], onDelete: Cascade)
+  hourLogId     String   @map("hour_log_id")
+  previousHours Float    @map("previous_hours")
+  newHours      Float    @map("new_hours")
+  changedAt     DateTime @default(now()) @map("changed_at")
+  changedBy     User     @relation(fields: [changedById], references: [id], onDelete: Cascade)
+  changedById   String   @map("changed_by_id")
 
   @@map("hour_changes")
 }
