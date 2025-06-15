@@ -95,6 +95,11 @@ export class SubjectService {
               },
             },
           },
+          enrollments: {
+            include: {
+              student: true,
+            },
+          }
         },
       });
       if (!subject) return { error: new SubjectNotFoundError(professorId, subjectId) };
@@ -115,6 +120,10 @@ export class SubjectService {
           id: volunteer.volunteer.user.id,
           name: volunteer.volunteer.user.name,
         })) ?? [],
+        subject.enrollments.map(enrollment => ({
+          id: enrollment.student.id,
+          name: enrollment.student.name,
+        })) ?? []
       )};
     } catch (error: any) {
       console.error(`Could not retrieve subject: ${error.message}`);
