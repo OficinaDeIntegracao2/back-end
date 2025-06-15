@@ -1,5 +1,5 @@
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
-import { Enrollment, PrismaClient, Student, Subject, User, Volunteer, VolunteerToSubject } from "@prisma/client";
+import { PrismaClient, Student, Subject, User } from "@prisma/client";
 import SubjectNotFoundError from "./error/subject-not-found.error";
 import VolunteerNotFoundError from "./error/volunteer-not-found.error";
 import AlreadyAssociatedError from "./error/already-associated.error";
