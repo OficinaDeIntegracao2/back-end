@@ -29,5 +29,5 @@ export class UserOutputDto {
     name: string;
     description: string;
     totalHours: number;
-  };
+  }
 }

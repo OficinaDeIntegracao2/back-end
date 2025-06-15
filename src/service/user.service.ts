@@ -8,6 +8,7 @@ import { logger } from "@util/logger.util";
 import bcrypt from "bcrypt";
 import ProfessorNotFoundError from "./error/professor-not-found.error";
 import VolunteerNotFoundError from "./error/volunteer-not-found.error";
+import { calculateSubjectTotalHours } from "@util/calculate-subject-total-hours.util";
 
 interface CreateProfessorOutput {
   professor?: CreatedUserDto;
@@ -111,7 +112,20 @@ export class UserService {
     try {
       const professor = await this.prisma.professor.findUnique({
         where: { id },
-        include: { user: true , subjects: true },
+        include: { 
+          user: true , 
+          subjects: { 
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              startTime: true,
+              endTime: true,
+              durationWeeks: true,
+              weekdays: true,
+            }
+          } 
+        },
       });
       if (!professor) return { error: new ProfessorNotFoundError(id) };
       return {
@@ -125,7 +139,7 @@ export class UserService {
             id: subject.id,
             name: subject.name,
             description: subject.description,
-            totalHours: subject.totalHours,
+            totalHours: calculateSubjectTotalHours(subject.startTime, subject.endTime, subject.durationWeeks, subject.weekdays),
           })) ?? []
         ),
       };
@@ -148,7 +162,10 @@ export class UserService {
                   id: true,
                   name: true,
                   description: true,
-                  totalHours: true,
+                  startTime: true,
+                  endTime: true,
+                  durationWeeks: true,
+                  weekdays: true,
                 },
               },
             },
@@ -158,7 +175,7 @@ export class UserService {
       if (!volunteer) return { error: new VolunteerNotFoundError(id) };
       return {
         volunteer: new UserOutputDto(
-          volunteer.user.id,
+          volunteer.id,
           volunteer.user.name,
           volunteer.user.email,
           volunteer.user.role,
@@ -167,7 +184,7 @@ export class UserService {
             id: subject.subject.id,
             name: subject.subject.name,
             description: subject.subject.description, 
-            totalHours: subject.subject.totalHours,
+            totalHours: calculateSubjectTotalHours(subject.subject.startTime, subject.subject.endTime, subject.subject.durationWeeks, subject.subject.weekdays), 
           })) ?? []
         ),
       };
