@@ -3,6 +3,8 @@
     "@prisma/client": "6.8.2",
     "bcrypt": "6.0.0",
     "cors": "2.8.5",
+    "data-fns": "1.1.0",
+    "date-fns": "4.1.0",
     "dotenv": "16.4.5",
     "express": "4.19.2",
     "glob": "10.3.16",
