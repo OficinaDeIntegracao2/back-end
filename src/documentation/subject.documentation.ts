@@ -29,9 +29,6 @@
  *           type: string
  *           format: HH:mm
  *           example: "16:00"
- *         totalHours:
- *           type: number
- *           example: 60
  *         durationWeeks:
  *           type: string
  *           example: "12 weeks"
@@ -125,9 +122,6 @@
  *               endTime:
  *                 type: string
  *                 example: "16:00"
- *               totalHours:
- *                 type: number
- *                 example: 60
  *               durationWeeks:
  *                 type: string
  *                 example: "12 weeks"
@@ -267,9 +261,6 @@
  *               endTime:
  *                 type: string
  *                 example: "17:00"
- *               totalHours:
- *                 type: number
- *                 example: 80
  *               durationWeeks:
  *                 type: string
  *                 example: "16 weeks"
