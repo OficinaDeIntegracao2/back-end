@@ -2,78 +2,138 @@
  * @swagger
  * tags:
  *   name: Subjects
- *   description: Operações relacionadas a matérias
+ *   description: Gerenciamento de matérias
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     SubjectBase:
+ *     SubjectCreateRequest:
+ *       type: object
+ *       required:
+ *         - name
+ *         - description
+ *         - weekdays
+ *         - startTime
+ *         - endTime
+ *         - durationWeeks
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Advanced Mathematics"
+ *         description:
+ *           type: string
+ *           example: "Course covering advanced mathematical concepts"
+ *         weekdays:
+ *           type: string
+ *           example: "MON,WED,FRI"
+ *         startTime:
+ *           type: string
+ *           format: time
+ *           example: "14:00"
+ *         endTime:
+ *           type: string
+ *           format: time
+ *           example: "16:00"
+ *         durationWeeks:
+ *           type: string
+ *           example: "12"
+ * 
+ *     SubjectUpdateRequest:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Updated Mathematics"
+ *         description:
+ *           type: string
+ *           example: "Updated course description"
+ *         weekdays:
+ *           type: string
+ *           example: "TUE,THU"
+ *         startTime:
+ *           type: string
+ *           format: time
+ *           example: "15:00"
+ *         endTime:
+ *           type: string
+ *           format: time
+ *           example: "17:00"
+ *         durationWeeks:
+ *           type: string
+ *           example: "10"
+ * 
+ *     CreatedSubject:
  *       type: object
  *       properties:
  *         id:
  *           type: string
+ *           format: uuid
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         professorId:
+ *           type: string
+ *           format: uuid
+ * 
+ *     SubjectDetails:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
  *         name:
  *           type: string
  *         description:
  *           type: string
  *         weekdays:
  *           type: string
- *           example: "Mon,Wed,Fri"
  *         startTime:
  *           type: string
- *           format: HH:mm
- *           example: "14:30"
  *         endTime:
  *           type: string
- *           format: HH:mm
- *           example: "16:00"
  *         durationWeeks:
  *           type: string
- *           example: "12 weeks"
- *         professorId:
- *           type: string
- * 
- *     SubjectSimple:
- *       allOf:
- *         - $ref: '#/components/schemas/SubjectBase'
- *         - type: object
+ *         totalHours:
+ *           type: number
+ *         professor:
+ *           type: object
  *           properties:
- *             createdAt:
+ *             id:
  *               type: string
- *               format: date-time
- *             updatedAt:
+ *               format: uuid
+ *             name:
  *               type: string
- *               format: date-time
+ *         volunteers:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 format: uuid
+ *               name:
+ *                 type: string
+ *         enrollments:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 format: uuid
+ *               name:
+ *                 type: string
  * 
- *     ProfessorInfo:
+ *     SubjectsListResponse:
  *       type: object
  *       properties:
- *         id:
- *           type: string
- *         name:
- *           type: string
- * 
- *     VolunteerInfo:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         name:
- *           type: string
- * 
- *     SubjectComplete:
- *       allOf:
- *         - $ref: '#/components/schemas/SubjectBase'
- *         - type: object
- *           properties:
- *             professor:
- *               $ref: '#/components/schemas/ProfessorInfo'
- *             volunteers:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/VolunteerInfo'
+ *         subjects:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CreatedSubject'
  * 
  *     ErrorResponse:
  *       type: object
@@ -84,9 +144,10 @@
 
 /**
  * @swagger
- * /api/users/professors/{professorId}/subjects:
+ * /api/professors/{professorId}/subjects:
  *   post:
- *     summary: Cria uma nova matéria (apenas PROFESSOR)
+ *     summary: Create a new subject
+ *     description: Only PROFESSOR role can create subjects
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
@@ -96,55 +157,35 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor responsável
+ *           format: uuid
+ *         description: ID of the professor creating the subject
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - description
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Matemática Avançada"
- *               description:
- *                 type: string
- *                 example: "Curso de matemática para ensino médio"
- *               weekdays:
- *                 type: string
- *                 example: "Mon,Wed,Fri"
- *               startTime:
- *                 type: string
- *                 example: "14:30"
- *               endTime:
- *                 type: string
- *                 example: "16:00"
- *               durationWeeks:
- *                 type: string
- *                 example: "12 weeks"
+ *             $ref: '#/components/schemas/SubjectCreateRequest'
  *     responses:
  *       201:
- *         description: Matéria criada com sucesso
+ *         description: Subject created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/SubjectSimple'
+ *               $ref: '#/components/schemas/CreatedSubject'
  *       400:
- *         description: Erro de validação ou matéria já existe
+ *         description: Invalid input or subject already exists
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado
+ *         description: Forbidden (requires PROFESSOR role)
  * 
  *   get:
- *     summary: Lista todas as matérias de um professor (ADMIN ou próprio PROFESSOR)
+ *     summary: Get all subjects for a professor
+ *     description: Returns all subjects for the specified professor (ADMIN or same professor only)
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
@@ -154,36 +195,30 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor
+ *           format: uuid
+ *         description: ID of the professor
  *     responses:
  *       200:
- *         description: Lista de matérias retornada com sucesso
+ *         description: List of subjects
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 subjects:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/SubjectSimple'
+ *               $ref: '#/components/schemas/SubjectsListResponse'
  *       400:
- *         description: Erro ao buscar matérias
+ *         description: Error retrieving subjects
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado
- */
-
-/**
- * @swagger
- * /api/users/professors/{professorId}/subjects/{subjectId}:
+ *         description: Forbidden (not ADMIN or same professor)
+ * 
+ * /api/professors/{professorId}/subjects/{subjectId}:
  *   get:
- *     summary: Obtém uma matéria específica (ADMIN, PROFESSOR ou VOLUNTEER vinculado)
+ *     summary: Get subject details
+ *     description: Get detailed information about a specific subject (ADMIN, PROFESSOR or VOLUNTEER)
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
@@ -193,36 +228,36 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor
+ *           format: uuid
+ *         description: ID of the professor
  *       - in: path
  *         name: subjectId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da matéria
+ *           format: uuid
+ *         description: ID of the subject
  *     responses:
  *       200:
- *         description: Matéria encontrada
+ *         description: Subject details
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 subject:
- *                   $ref: '#/components/schemas/SubjectComplete'
+ *               $ref: '#/components/schemas/SubjectDetails'
  *       400:
- *         description: Matéria não encontrada
+ *         description: Subject not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado
+ *         description: Forbidden (not authorized to view this subject)
  * 
  *   patch:
- *     summary: Atualiza uma matéria existente (ADMIN ou próprio PROFESSOR)
+ *     summary: Update a subject
+ *     description: Update subject information (ADMIN or same professor only)
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
@@ -232,54 +267,38 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor
+ *           format: uuid
+ *         description: ID of the professor
  *       - in: path
  *         name: subjectId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da matéria
+ *           format: uuid
+ *         description: ID of the subject to update
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Matemática Avançada II"
- *               description:
- *                 type: string
- *                 example: "Curso atualizado de matemática"
- *               weekdays:
- *                 type: string
- *                 example: "Tue,Thu"
- *               startTime:
- *                 type: string
- *                 example: "15:00"
- *               endTime:
- *                 type: string
- *                 example: "17:00"
- *               durationWeeks:
- *                 type: string
- *                 example: "16 weeks"
+ *             $ref: '#/components/schemas/SubjectUpdateRequest'
  *     responses:
  *       200:
- *         description: Matéria atualizada com sucesso
+ *         description: Subject updated successfully
  *       400:
- *         description: Erro de validação ou matéria não encontrada
+ *         description: Invalid input or subject not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado
+ *         description: Forbidden (not ADMIN or same professor)
  * 
  *   delete:
- *     summary: Remove uma matéria existente (ADMIN ou próprio PROFESSOR)
+ *     summary: Delete a subject
+ *     description: Delete a subject (ADMIN or same professor only)
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
@@ -289,24 +308,26 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor
+ *           format: uuid
+ *         description: ID of the professor
  *       - in: path
  *         name: subjectId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da matéria
+ *           format: uuid
+ *         description: ID of the subject to delete
  *     responses:
  *       200:
- *         description: Matéria removida com sucesso
+ *         description: Subject deleted successfully
  *       400:
- *         description: Erro ao remover matéria
+ *         description: Subject not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado
+ *         description: Forbidden (not ADMIN or same professor)
  */

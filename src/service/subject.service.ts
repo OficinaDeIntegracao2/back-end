@@ -101,7 +101,7 @@ export class SubjectService {
           }
         },
       });
-      if (!subject) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      if (!subject) return { error: new SubjectNotFoundError(subjectId) };
       return { subject: new SubjectOutputDto(
         subject.id,
         subject.name,
@@ -134,7 +134,7 @@ export class SubjectService {
       const subjectExists = await this.prisma.subject.findUnique({
         where: { id: subjectId, professorId },
       });
-      if (!subjectExists) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
       await this.prisma.subject.update({
         where: { id: subjectId, professorId},
         data: input,
@@ -151,7 +151,7 @@ export class SubjectService {
       const subjectExists = await this.prisma.subject.findUnique({
         where: { id: subjectId, professorId },
       });
-      if (!subjectExists) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      if (!subjectExists) return { error: new SubjectNotFoundError(subjectId) };
       await this.prisma.subject.delete({
         where: { id: subjectId, professorId },
       });

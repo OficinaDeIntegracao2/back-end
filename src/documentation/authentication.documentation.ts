@@ -2,7 +2,56 @@
  * @swagger
  * tags:
  *   name: Authentication
- *   description: Operações de autenticação (login)
+ *   description: Autenticação de usuários
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginRequest:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: professor@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: senha123
+ * 
+ *     AuthenticatedUser:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         email:
+ *           type: string
+ *         name:
+ *           type: string
+ *         role:
+ *           type: string
+ *           enum: [ADMIN, PROFESSOR, STUDENT]
+ * 
+ *     AuthSuccessResponse:
+ *       type: object
+ *       properties:
+ *         user:
+ *           $ref: '#/components/schemas/AuthenticatedUser'
+ *         token:
+ *           type: string
+ *           description: JWT token for authenticated requests
+ * 
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
  */
 
 /**
@@ -16,39 +65,24 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "usuario@example.com"
- *               password:
- *                 type: string
- *                 format: password
- *                 example: "senhaSegura123"
+ *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
  *       201:
- *         description: Usuário autenticado com sucesso
+ *         description: Autenticação bem-sucedida
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   type: object
- *                   description: Dados do usuário autenticado
- *                   example:
- *                     id: "abc123"
- *                     name: "Nome do Usuário"
- *                     email: "usuario@example.com"
- *                     role: "PROFESSOR"
- *                 token:
- *                   type: string
- *                   description: Token JWT
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *               $ref: '#/components/schemas/AuthSuccessResponse'
  *       400:
  *         description: Credenciais inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */

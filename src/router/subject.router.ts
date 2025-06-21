@@ -24,6 +24,6 @@ export default class SubjectRouter implements Router {
   }
 
   path = (): string => {
-    return "/api/users/professors/:professorId/subjects";
+    return "/api/professors/:professorId/subjects";
   }
 }

@@ -2,69 +2,88 @@
  * @swagger
  * tags:
  *   name: Users
- *   description: Operações relacionadas a usuários (professores e voluntários)
+ *   description: Gerenciamento de usuários (professores e voluntários)
  */
 
 /**
  * @swagger
  * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
  *   schemas:
- *     User:
+ *     UserCreateRequest:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "John Doe"
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: "john@example.com"
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: "securePassword123"
+ *           minLength: 8
+ * 
+ *     CreatedUser:
  *       type: object
  *       properties:
  *         id:
  *           type: string
+ *           format: uuid
  *         name:
  *           type: string
  *         email:
  *           type: string
  *         role:
  *           type: string
- *           enum: [PROFESSOR, VOLUNTEER]
+ *           enum: [ADMIN, PROFESSOR, VOLUNTEER]
  *         createdAt:
  *           type: string
  *           format: date-time
- *     Professor:
- *       allOf:
- *         - $ref: '#/components/schemas/User'
- *         - type: object
- *           properties:
- *             subjects:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   description:
- *                     type: string
- *                   totalHours:
- *                     type: number
- *     Volunteer:
- *       allOf:
- *         - $ref: '#/components/schemas/User'
- *         - type: object
- *           properties:
- *             subjects:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   description:
- *                     type: string
- *                   totalHours:
- *                     type: number
+ * 
+ *     UserDetails:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         role:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         subjects:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 format: uuid
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               totalHours:
+ *                 type: number
+ * 
+ *     UsersListResponse:
+ *       type: object
+ *       properties:
+ *         users:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CreatedUser'
+ * 
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -76,7 +95,7 @@
  * @swagger
  * /api/users/professors:
  *   post:
- *     summary: Cria um novo professor (apenas ADMIN)
+ *     summary: Create a new professor (ADMIN only)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -85,40 +104,28 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/UserCreateRequest'
  *     responses:
  *       201:
- *         description: Professor criado com sucesso
+ *         description: Professor created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/CreatedUser'
  *       400:
- *         description: Erro de validação ou professor já existe
+ *         description: Invalid input or user already exists
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
- */
-
-/**
- * @swagger
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (requires ADMIN role)
+ * 
  * /api/users/volunteers:
  *   post:
- *     summary: Cria um novo voluntário (apenas ADMIN ou PROFESSOR)
+ *     summary: Create a new volunteer (ADMIN or PROFESSOR)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -127,40 +134,29 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/UserCreateRequest'
  *     responses:
  *       201:
- *         description: Voluntário criado com sucesso
+ *         description: Volunteer created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/CreatedUser'
  *       400:
- *         description: Erro de validação ou voluntário já existe
+ *         description: Invalid input or user already exists
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
- */
-
-/**
- * @swagger
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (requires ADMIN or PROFESSOR role)
+ * 
  * /api/users/{role}:
  *   get:
- *     summary: Lista usuários por tipo (PROFESSOR ou VOLUNTEER)
+ *     summary: Get users by role (ADMIN or PROFESSOR)
+ *     description: Get all professors (role=professors) or volunteers (role=volunteers)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -171,34 +167,28 @@
  *         schema:
  *           type: string
  *           enum: [professors, volunteers]
- *         description: Tipo de usuário a ser listado
+ *         description: Type of users to retrieve
  *     responses:
  *       200:
- *         description: Lista de usuários retornada com sucesso
+ *         description: List of users
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 users:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/UsersListResponse'
  *       400:
- *         description: Erro ao buscar usuários
+ *         description: Invalid role or error retrieving users
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
- */
-
-/**
- * @swagger
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (requires ADMIN or PROFESSOR role)
+ * 
  * /api/users/professors/{professorId}:
  *   get:
- *     summary: Obtém um professor específico pelo ID
+ *     summary: Get professor details (ADMIN or same professor)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -208,34 +198,29 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do professor
+ *           format: uuid
+ *         description: ID of the professor
  *     responses:
  *       200:
- *         description: Professor encontrado
+ *         description: Professor details with associated subjects
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 professor:
- *                   $ref: '#/components/schemas/Professor'
+ *               $ref: '#/components/schemas/UserDetails'
  *       400:
- *         description: Professor não encontrado
+ *         description: Professor not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado (apenas o próprio usuário ou ADMIN)
- */
-
-/**
- * @swagger
+ *         description: Forbidden (not ADMIN or same professor)
+ * 
  * /api/users/volunteers/{volunteerId}:
  *   get:
- *     summary: Obtém um voluntário específico pelo ID
+ *     summary: Get volunteer details (ADMIN, PROFESSOR or same volunteer)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -245,25 +230,23 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do voluntário
+ *           format: uuid
+ *         description: ID of the volunteer
  *     responses:
  *       200:
- *         description: Voluntário encontrado
+ *         description: Volunteer details with associated subjects
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 volunteer:
- *                   $ref: '#/components/schemas/Volunteer'
+ *               $ref: '#/components/schemas/UserDetails'
  *       400:
- *         description: Voluntário não encontrado
+ *         description: Volunteer not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *       403:
- *         description: Acesso negado (apenas o próprio usuário, PROFESSOR ou ADMIN)
+ *         description: Forbidden (not authorized to view this volunteer)
  */
