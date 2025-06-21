@@ -26,7 +26,7 @@ export default class ParticipantService {
       const subject = await this.prisma.subject.findUnique({
         where: { id: subjectId, professorId },
       });
-      if (!subject) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      if (!subject) return { error: new SubjectNotFoundError(subjectId) };
       const volunteer = await this.prisma.user.findUnique({
         where: { id: volunteerId },
       });
@@ -58,7 +58,7 @@ export default class ParticipantService {
           professorId,
         },
       });
-      if (!subject) return { error: new SubjectNotFoundError(professorId, subjectId) };
+      if (!subject) return { error: new SubjectNotFoundError(subjectId) };
       const existingStudent = await this.prisma.student.findUnique({
         where: { email },
       });
