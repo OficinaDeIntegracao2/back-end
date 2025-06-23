@@ -45,7 +45,7 @@ describe('main.ts', () => {
   });
 
   it('Must start the server on port 3000', async () => {
-    const { main } = await import('../../src/main');
+    const { main } = await import('../src/main');
     await main();
 
     expect(mockGetIntValue).toHaveBeenCalled();
