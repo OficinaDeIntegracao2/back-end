@@ -37,13 +37,14 @@ describe("SubjectController", () => {
       req = {
         params: { professorId: "1" },
         body: {
+          professorId: "1",
           name: "Matematica",
           description: "Matematica",
           weekdays: "Segunda",
           startTime: "17h",
           endTime: "18h",
-          totalHours: 20,
           durationWeeks: "15",
+          totalHours: 20,
         },
       };
 
@@ -55,8 +56,8 @@ describe("SubjectController", () => {
         weekdays: "Segunda",
         startTime: "17h",
         endTime: "18h",
-        totalHours: 20,
         durationWeeks: "15",
+        totalHours: 20,
       };
 
       mockSubjectService.create.mockResolvedValue({
@@ -73,8 +74,8 @@ describe("SubjectController", () => {
         "Segunda",
         "17h",
         "18h",
-        20,
-        "15"
+        "15",
+        20
       );
       expect(statusMock).toHaveBeenCalledWith(HttpStatus.CREATED);
       expect(sendMock).toHaveBeenCalledWith(subject);
@@ -144,8 +145,7 @@ describe("SubjectController", () => {
         "subj1",
         "Matemática",
         "Matemática básica",
-        40,
-        "SEGUNDA",
+        "40",
         "08:00",
         "10:00",
         "4",
@@ -191,7 +191,6 @@ describe("SubjectController", () => {
           weekdays: "3",
           startTime: "1",
           endTime: "1",
-          totalHours: 20,
           durationWeeks: "2",
         },
       };
@@ -206,7 +205,6 @@ describe("SubjectController", () => {
         weekdays: "3",
         startTime: "1",
         endTime: "1",
-        totalHours: 20,
         durationWeeks: "2",
       });
       expect(statusMock).toHaveBeenCalledWith(HttpStatus.OK);

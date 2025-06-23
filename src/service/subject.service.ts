@@ -35,7 +35,7 @@ export class SubjectService {
       this.prisma = this.databaseConfiguration.getClient();
     }
 
-  create = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, durationWeeks: string): Promise<CreateOutput> => {
+  create = async (professorId: string, name: string, description: string, weekdays: string, startTime: string, endTime: string, durationWeeks: string, totalHours: number): Promise<CreateOutput> => {
     try {
       const existingSubject = await this.prisma.subject.findUnique({
         where: { name },
@@ -49,6 +49,7 @@ export class SubjectService {
           startTime,
           endTime,
           durationWeeks,
+          totalHours,
           professor: {
             connect: { id: professorId },
           },
