@@ -4,5 +4,6 @@ export enum Constant {
   SOURCE_FOLDER = "src",
   SERVER_PORT = "SERVER_PORT",
   JWT_SECRET = "JWT_SECRET",
-  JWT_EXPIRES_IN = "JWT_EXPIRES_IN"
+  JWT_EXPIRES_IN = "JWT_EXPIRES_IN",
+  HOUR_FORMAT = 'HH:mm',
 }

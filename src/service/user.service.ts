@@ -59,7 +59,7 @@ export class UserService {
           }
         },
       }).then((user) => {
-        return { professor: new CreatedUserDto(user.id, user.name, user.role, user.createdAt) };
+        return { professor: new CreatedUserDto(user.id, user.name, user.email, user.role, user.createdAt) };
       });
     } catch (error: any) {
       logger.error(`Could not create user: ${error.message}`);
@@ -85,7 +85,7 @@ export class UserService {
           }
         },
       }).then((user) => {
-        return { volunteer: new CreatedUserDto(user.id, user.name, user.role, user.createdAt) };
+        return { volunteer: new CreatedUserDto(user.id, user.name, user.email, user.role, user.createdAt) };
       });
     } catch (error: any) {
       logger.error(`Could not create user: ${error.message}`);
@@ -100,7 +100,7 @@ export class UserService {
         where: { role },
       });
       if (!users || users.length === 0) return { users: `No users found with role ${role}` }; // TODO: Create a custom response for this case
-      return { users: users.map((user) => { return new CreatedUserDto(user.id, user.name, user.role, user.createdAt);})};
+      return { users: users.map((user) => { return new CreatedUserDto(user.id, user.name, user.email, user.role, user.createdAt);})};
     } catch (error: any) {
       logger.error(`Could not retrieve users by role: ${error.message}`);
       return { error: error };

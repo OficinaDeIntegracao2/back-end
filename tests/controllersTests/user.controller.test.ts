@@ -40,6 +40,7 @@ describe("UserController", () => {
       const professor = {
         id: "1",
         name: req.body.name,
+        email: req.body.email,
         role: "PROFESSOR",
         createdAt: new Date(),
       };
@@ -129,8 +130,8 @@ describe("UserController", () => {
       req = { params: { role: "PROFESSOR" } };
 
       const users = [
-        { id: "1", name: "Mateus", role: "PROFESSOR", createdAt: new Date() },
-        { id: "2", name: "Jose", role: "PROFESSOR", createdAt: new Date() },
+        { id: "1", name: "Mateus", email: "mat@test.com", role: "PROFESSOR", createdAt: new Date() },
+        { id: "2", name: "Jose", email: "jose@test.com", role: "PROFESSOR", createdAt: new Date() },
       ];
       mockUserService.getUsersByRole.mockResolvedValue({
         users,

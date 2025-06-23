@@ -9,8 +9,9 @@ export class SubjectOutputDto {
   durationWeeks: string;
   professor: SubjectOutputDto.ProfessorSummary;
   volunteers: SubjectOutputDto.VolunteerSummary[];
+  enrollments: SubjectOutputDto.EnrollmentSummary[];
 
-  constructor(id: string, name: string, description: string, totalHours: number, weekdays: string, startTime: string, endTime: string, durationWeeks: string, professor: SubjectOutputDto.ProfessorSummary, volunteers: SubjectOutputDto.VolunteerSummary[]) {
+  constructor(id: string, name: string, description: string, totalHours: number, weekdays: string, startTime: string, endTime: string, durationWeeks: string, professor: SubjectOutputDto.ProfessorSummary, volunteers: SubjectOutputDto.VolunteerSummary[], enrollments: SubjectOutputDto.EnrollmentSummary[] = []) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -21,6 +22,7 @@ export class SubjectOutputDto {
     this.durationWeeks = durationWeeks;
     this.professor = professor;
     this.volunteers = volunteers;
+    this.enrollments = enrollments;
   }
 }
 
@@ -32,6 +34,11 @@ namespace SubjectOutputDto {
   };
   
   export type VolunteerSummary = {
+    id: string;
+    name: string;
+  };
+
+  export type EnrollmentSummary = {
     id: string;
     name: string;
   };

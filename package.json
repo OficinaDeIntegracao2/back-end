@@ -3,6 +3,8 @@
     "@prisma/client": "^6.10.0",
     "bcrypt": "6.0.0",
     "cors": "2.8.5",
+    "data-fns": "1.1.0",
+    "date-fns": "4.1.0",
     "dotenv": "16.4.5",
     "express": "4.19.2",
     "glob": "10.3.16",
@@ -41,9 +43,11 @@
   "main": "dist/main.js",
   "name": "back-end",
   "scripts": {
+    "setup": "npx prisma migrate dev && npx prisma generate",
     "build": "tsc",
     "clean": "rimraf ./dist",
     "dev": "ts-node-dev --pretty --respawn --transpile-only -r tsconfig-paths/register ./src/start.ts | pino-pretty",
+    "start:dev": "npm run setup && npm run dev",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
