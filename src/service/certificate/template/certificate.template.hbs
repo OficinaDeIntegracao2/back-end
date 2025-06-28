@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificado</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 60px; }
+    .title { font-size: 24px; font-weight: bold; }
+    .details { margin-top: 30px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="title">Certificado de Participação</div>
+  <div class="details">
+    Certificamos que <strong>{{studentName}}</strong> participou da matéria
+    <strong>{{subjectName}}</strong> ministrada pelo professor
+    <strong>{{professorName}}</strong>, com carga horária total de
+    <strong>{{totalHours}} horas</strong>.<br /><br />
+    Emitido em: {{issuedAt}}
+  </div>
+</body>
+</html>
