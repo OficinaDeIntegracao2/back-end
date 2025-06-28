@@ -7,6 +7,7 @@ import { logger } from "@util/logger.util";
 import { container } from "tsyringe";
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
 import SwaggerConfiguration from "@configuration/swagger.configuration";
+import { ResendConfiguration } from "@configuration/resend.configuration";
 
 
 export const main = async () => {
@@ -14,6 +15,7 @@ export const main = async () => {
   const expressApplication = container.resolve(ExpressConfiguration).getExpressApplication();
   container.resolve(DatabaseConfiguration);
   container.resolve(RouteConfiguration);
+  container.resolve(ResendConfiguration);
   container.resolve(SwaggerConfiguration).setup();
   const port = environmentConfiguration.getIntValue(Constant.SERVER_PORT);
   expressApplication.listen(port, () => {
