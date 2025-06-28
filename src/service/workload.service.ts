@@ -4,6 +4,7 @@ import { injectable } from "tsyringe";
 import StudentNotFoundError from "./error/student-not-found.error";
 import SubjectNotFoundError from "./error/subject-not-found.error";
 import SubjectNotScheduledError from "./error/subject-not-scheduled.error";
+import { normalizeToBrazilNoon } from "@util/date.util";
 
 const weekdayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 @injectable()
@@ -29,7 +30,7 @@ export default class WorkloadService {
         where: { id: subjectId },
       });
       if (!subject) return { error: new SubjectNotFoundError(subjectId) };
-      const attendedAtDate = new Date(attendedAt)
+      const attendedAtDate = normalizeToBrazilNoon(attendedAt)
       const error = this.assertThereIsSubjectAtAttendance(
         subject,
         attendedAtDate
@@ -70,6 +71,7 @@ export default class WorkloadService {
     .split(',')
     .map(day => day.trim().toUpperCase());
     const dayIndex = attendedAtDate.getDay();
+    console.log(`Attended Day: ${attendedAtDate}, Day: ${attendedAtDate.getDay()}, Day index: ${dayIndex}, Weekdays: ${weekdays}`);
     const attendedWeekdayStr = weekdayMap[dayIndex];
     if (!weekdays.includes(attendedWeekdayStr)) return new SubjectNotScheduledError(subject.id, attendedAtDate);
     return null;
