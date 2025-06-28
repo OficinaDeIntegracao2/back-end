@@ -6,4 +6,5 @@ export enum Constant {
   JWT_SECRET = "JWT_SECRET",
   JWT_EXPIRES_IN = "JWT_EXPIRES_IN",
   HOUR_FORMAT = 'HH:mm',
+  RESEND_API_KEY = "RESEND_API_KEY",
 }
