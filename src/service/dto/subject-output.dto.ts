@@ -49,5 +49,7 @@ namespace SubjectOutputDto {
   export type EnrollmentSummary = {
     id: string;
     name: string;
+    email: string;
+    hours: number;
   };
 }

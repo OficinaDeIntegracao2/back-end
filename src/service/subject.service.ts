@@ -1,10 +1,11 @@
 import { DatabaseConfiguration } from "@configuration/database/database.configuration";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Subject } from "@prisma/client";
 import { injectable } from "tsyringe";
 import { CreatedSubjectDto } from "./dto/created-subject.dto";
 import SubjectNotFoundError from "./error/subject-not-found.error";
 import SubjectAlreadyExistsError from "./error/subject-already-exists.error";
 import { SubjectOutputDto } from "./dto/subject-output.dto";
+import NoAttendanceRecordsError from "./error/no-attendance-records.error";
 
 interface CreateOutput {
   subject?: CreatedSubjectDto;
@@ -102,6 +103,26 @@ export class SubjectService {
         },
       });
       if (!subject) return { error: new SubjectNotFoundError(subjectId) };
+      const volunteers = subject.volunteers.map(volunteer => ({
+        id: volunteer.volunteer.user.id,
+        name: volunteer.volunteer.user.name,
+      })) ?? [];
+
+      const enrollments = subject.enrollments ?? [];
+      const enrollmentDtos = await Promise.all(
+        enrollments.map(async enrollment => {
+          const hoursResult = await this.getReachedHours(enrollment.student.id, subject);
+          if (hoursResult instanceof Error) {
+            throw hoursResult;
+          }
+          return {
+            id: enrollment.student.id,
+            name: enrollment.student.name,
+            email: enrollment.student.email,
+            hours: hoursResult,
+          };
+        })
+      );
       return { subject: new SubjectOutputDto(
         subject.id,
         subject.name,
@@ -114,14 +135,8 @@ export class SubjectService {
           id: subject.professor.user.id,
           name: subject.professor.user.name,
         },
-        subject.volunteers.map(volunteer => ({
-          id: volunteer.volunteer.user.id,
-          name: volunteer.volunteer.user.name,
-        })) ?? [],
-        subject.enrollments.map(enrollment => ({
-          id: enrollment.student.id,
-          name: enrollment.student.name,
-        })) ?? []
+        volunteers,
+        enrollmentDtos
       )};
     } catch (error: any) {
       console.error(`Could not retrieve subject: ${error.message}`);
@@ -159,6 +174,26 @@ export class SubjectService {
     } catch (error: any) {
       console.error(`Could not delete subject: ${error.message}`);
       return { error: error };
+    }
+  }
+
+  private getReachedHours = async (studentId: string, subject: Subject): Promise<number | Error> => {
+    try {
+      const hourlogs = await this.prisma.hourLog.findMany({
+        where: {
+          studentId,
+          subjectId: subject.id,
+        },
+      })
+      if (!hourlogs.length) return new NoAttendanceRecordsError(studentId, subject.id);
+      const [startHour, startMinute] = subject.startTime.split(":").map(Number);
+      const [endHour, endMinute] = subject.endTime.split(":").map(Number);
+      const startTime = new Date(2000, 0, 1, startHour, startMinute);
+      const endTime = new Date(2000, 0, 1, endHour, endMinute);
+      const classDurationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+      return hourlogs.length * classDurationHours;
+    } catch (error: any) {
+      return new Error(`Could not retrieve reached hours for student ${studentId} in subject ${subject.id}: ${error.message}`);
     }
   }
 }

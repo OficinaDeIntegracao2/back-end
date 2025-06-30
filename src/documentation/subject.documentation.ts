@@ -126,6 +126,12 @@
  *                 format: uuid
  *               name:
  *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               hours:
+ *                 type: number
+ *                 description: Horas completadas pelo aluno na matéria
  * 
  *     SubjectsListResponse:
  *       type: object
@@ -218,7 +224,9 @@
  * /api/professors/{professorId}/subjects/{subjectId}:
  *   get:
  *     summary: Get subject details
- *     description: Get detailed information about a specific subject (ADMIN, PROFESSOR or VOLUNTEER)
+ *     description: |
+ *       Get detailed information about a specific subject (ADMIN, PROFESSOR or VOLUNTEER)
+ *       Includes student enrollment data with completed hours and email
  *     tags: [Subjects]
  *     security:
  *       - bearerAuth: []
