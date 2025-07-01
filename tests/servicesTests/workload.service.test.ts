@@ -18,6 +18,7 @@ describe("WorkloadService", () => {
       findUnique: jest.fn(),
     },
     hourLog: {
+      findMany: jest.fn(),
       create: jest.fn(),
     },
   };
@@ -42,6 +43,7 @@ describe("WorkloadService", () => {
       id: subjectId,
       weekdays: "MON, TUE",
     });
+    prismaMock.hourLog.findMany.mockResolvedValue([])
     prismaMock.hourLog.create.mockResolvedValue({ id: "hl-1" });
 
     const result = await service.createHourLog(userId, subjectId, email, attendedAt);
