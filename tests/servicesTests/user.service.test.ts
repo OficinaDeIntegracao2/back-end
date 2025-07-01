@@ -16,6 +16,10 @@ let prismaMock: jest.Mocked<PrismaClient>;
 let databaseConfigMock: jest.Mocked<DatabaseConfiguration>;
 let userService: UserService;
 
+jest.mock("../../src/util/calculate-subject-total-hours.util", () => ({
+  calculateSubjectTotalHours: jest.fn(() => 40),
+}));
+
 describe("UserService", () => {
   beforeEach(() => {
     prismaMock = {
@@ -48,7 +52,7 @@ describe("UserService", () => {
       (prismaMock.user.create as jest.Mock).mockResolvedValue({
         id: "user-id",
         name: "Douglas",
-        email: "teste@email.com",
+        email: "douglas@email.com",
         password: "hashedPassword",
         role: Role.PROFESSOR,
         createdAt: new Date("2025-01-01"),
@@ -56,7 +60,7 @@ describe("UserService", () => {
 
       const result = await userService.createProfessor(
         "Douglas",
-        "teste@email.com",
+        "douglas@email.com",
         "123456"
       );
 
@@ -65,13 +69,14 @@ describe("UserService", () => {
         new CreatedUserDto(
           "user-id",
           "Douglas",
+          "douglas@email.com",
           Role.PROFESSOR,
           new Date("2025-01-01")
         )
       );
 
       expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
-        where: { email: "teste@email.com" },
+        where: { email: "douglas@email.com" },
       });
 
       expect(mockedBcrypt.hash).toHaveBeenCalledWith("123456", 8);
@@ -81,12 +86,12 @@ describe("UserService", () => {
     it("must return an error that the user already exists", async () => {
       (prismaMock.user.findUnique as jest.Mock).mockResolvedValue({
         id: "user-id",
-        email: "teste@email.com",
+        email: "douglas@email.com",
       });
 
       const result = await userService.createProfessor(
         "Douglas",
-        "teste@email.com",
+        "douglas@email.com",
         "123456"
       );
 
@@ -94,7 +99,7 @@ describe("UserService", () => {
       expect(result.error).toBeInstanceOf(UserAlreadyExistsError);
 
       expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
-        where: { email: "teste@email.com" },
+        where: { email: "douglas@email.com" },
       });
 
       expect(prismaMock.user.create).not.toHaveBeenCalled();
@@ -125,6 +130,7 @@ describe("UserService", () => {
         new CreatedUserDto(
           "user-id",
           "Matheus",
+          "matheus@email.com",
           Role.VOLUNTEER,
           new Date("2025-01-01")
         )
@@ -170,7 +176,7 @@ describe("UserService", () => {
         {
           id: "user-1",
           name: "Douglas",
-          email: "doug@email.com",
+          email: "douglas@email.com",
           password: "hashedPassword",
           role: Role.PROFESSOR,
           createdAt: new Date("2025-01-01"),
@@ -194,12 +200,14 @@ describe("UserService", () => {
         new CreatedUserDto(
           "user-1",
           "Douglas",
+          "douglas@email.com",
           Role.PROFESSOR,
           new Date("2025-01-01")
         ),
         new CreatedUserDto(
           "user-2",
           "Matheus",
+          "matheus@email.com",
           Role.PROFESSOR,
           new Date("2025-01-01")
         ),
@@ -240,13 +248,19 @@ describe("UserService", () => {
             id: "subj-1",
             name: "Matemática",
             description: "Matemática",
-            totalHours: 40,
+            startTime: "08:00",
+            endTime: "10:00",
+            durationWeeks: "10",
+            weekdays: "Segunda",
           },
           {
             id: "subj-2",
             name: "Física",
             description: "Física",
-            totalHours: 60,
+            startTime: "09:00",
+            endTime: "11:00",
+            durationWeeks: "10",
+            weekdays: "Segunda",
           },
         ],
       };
@@ -276,7 +290,7 @@ describe("UserService", () => {
               id: "subj-2",
               name: "Física",
               description: "Física",
-              totalHours: 60,
+              totalHours: 40,
             },
           ]
         )
@@ -284,7 +298,20 @@ describe("UserService", () => {
 
       expect(prismaMock.professor.findUnique).toHaveBeenCalledWith({
         where: { id: "prof-id" },
-        include: { user: true, subjects: true },
+        include: {
+          user: true,
+          subjects: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              startTime: true,
+              endTime: true,
+              durationWeeks: true,
+              weekdays: true,
+            },
+          },
+        },
       });
     });
 
@@ -301,7 +328,20 @@ describe("UserService", () => {
 
       expect(prismaMock.professor.findUnique).toHaveBeenCalledWith({
         where: { id: "prof-id" },
-        include: { user: true, subjects: true },
+        include: {
+          user: true,
+          subjects: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              startTime: true,
+              endTime: true,
+              durationWeeks: true,
+              weekdays: true,
+            },
+          },
+        },
       });
     });
   });
@@ -309,7 +349,7 @@ describe("UserService", () => {
   describe("getVolunteerById", () => {
     it("must return a volunteer", async () => {
       const mockVolunteer = {
-        id: "volunteer-id",
+        id: "user-id",
         user: {
           id: "user-id",
           name: "Matheus",
@@ -323,7 +363,7 @@ describe("UserService", () => {
               id: "subj-1",
               name: "Matemática",
               description: "Matemática",
-              totalHours: 30,
+              totalHours: 40,
             },
           },
           {
@@ -331,15 +371,17 @@ describe("UserService", () => {
               id: "subj-2",
               name: "História",
               description: "História",
-              totalHours: 50,
+              totalHours: 40,
             },
           },
         ],
       };
 
-      (prismaMock.volunteer.findUnique as jest.Mock).mockResolvedValue(mockVolunteer);
+      (prismaMock.volunteer.findUnique as jest.Mock).mockResolvedValue(
+        mockVolunteer
+      );
 
-      const result = await userService.getVolunteerById("volunteer-id");
+      const result = await userService.getVolunteerById("user-id");
 
       expect(result.error).toBeUndefined();
       expect(result.volunteer).toEqual(
@@ -354,20 +396,20 @@ describe("UserService", () => {
               id: "subj-1",
               name: "Matemática",
               description: "Matemática",
-              totalHours: 30,
+              totalHours: 40,
             },
             {
               id: "subj-2",
               name: "História",
               description: "História",
-              totalHours: 50,
+              totalHours: 40,
             },
           ]
         )
       );
 
       expect(prismaMock.volunteer.findUnique).toHaveBeenCalledWith({
-        where: { id: "volunteer-id" },
+        where: { id: "user-id" },
         include: {
           user: true,
           subjects: {
@@ -377,7 +419,10 @@ describe("UserService", () => {
                   id: true,
                   name: true,
                   description: true,
-                  totalHours: true,
+                  startTime: true,
+                  endTime: true,
+                  durationWeeks: true,
+                  weekdays: true,
                 },
               },
             },
@@ -389,16 +434,16 @@ describe("UserService", () => {
     it("must return an error that the volunteer was not found", async () => {
       (prismaMock.volunteer.findUnique as jest.Mock).mockResolvedValue(null);
 
-      const result = await userService.getVolunteerById("volunteer-id");
+      const result = await userService.getVolunteerById("user-id");
 
       expect(result.volunteer).toBeUndefined();
       expect(result.error).toBeInstanceOf(VolunteerNotFoundError);
       expect((result.error as VolunteerNotFoundError).message).toContain(
-        "volunteer-id"
+        "user-id"
       );
 
       expect(prismaMock.volunteer.findUnique).toHaveBeenCalledWith({
-        where: { id: "volunteer-id" },
+        where: { id: "user-id" },
         include: {
           user: true,
           subjects: {
@@ -408,7 +453,10 @@ describe("UserService", () => {
                   id: true,
                   name: true,
                   description: true,
-                  totalHours: true,
+                  startTime: true,
+                  endTime: true,
+                  durationWeeks: true,
+                  weekdays: true,
                 },
               },
             },
