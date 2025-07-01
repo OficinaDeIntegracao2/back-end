@@ -11,6 +11,7 @@ import SubjectNotFoundError from "@service/error/subject-not-found.error";
 import StudentNotEnrolledError from "@service/error/student-not-enrolled.error";
 import StudentHasNotReachedRequiredHoursError from "@service/error/not-reach-required-hours.error";
 import CertificateAlreadyExistsError from "@service/error/certificate-already-exists.error";
+import NoAttendanceRecordsError from "@service/error/no-attendance-records.error";
 
 interface CreateCertificateInput {
   subjectId: string;
@@ -99,9 +100,11 @@ export default class CertificateService {
         studentId,
       },
     });
-    if (!hourLogs.length) return new Error("Student has no attendance records for this subject");
-    const startTime = new Date(subject.startTime);
-    const endTime = new Date(subject.endTime);
+    if (!hourLogs.length) return new NoAttendanceRecordsError(studentId, subject.id);
+    const [startHour, startMinute] = subject.startTime.split(":").map(Number);
+    const [endHour, endMinute] = subject.endTime.split(":").map(Number);
+    const startTime = new Date(2000, 0, 1, startHour, startMinute);
+    const endTime = new Date(2000, 0, 1, endHour, endMinute);
     const classDurationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
     const studentHours = hourLogs.length * classDurationHours;
     const subjectTotalHours = calculateSubjectTotalHours(
