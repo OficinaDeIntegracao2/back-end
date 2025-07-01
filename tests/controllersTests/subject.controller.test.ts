@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { SubjectController } from "../../src/controller/subject.controlller";
+import { SubjectController } from "../../src/controller/subject.controller";
 import { HttpStatus } from "../../src/common/http-status.common";
 import { SubjectService } from "../../src/service/subject.service";
 import { Request, Response } from "express";
@@ -42,7 +42,6 @@ describe("SubjectController", () => {
           weekdays: "Segunda",
           startTime: "17h",
           endTime: "18h",
-          totalHours: 20,
           durationWeeks: "15",
         },
       };
@@ -55,7 +54,6 @@ describe("SubjectController", () => {
         weekdays: "Segunda",
         startTime: "17h",
         endTime: "18h",
-        totalHours: 20,
         durationWeeks: "15",
       };
 
@@ -73,7 +71,6 @@ describe("SubjectController", () => {
         "Segunda",
         "17h",
         "18h",
-        20,
         "15"
       );
       expect(statusMock).toHaveBeenCalledWith(HttpStatus.CREATED);
@@ -89,7 +86,7 @@ describe("SubjectController", () => {
           weekdays: "Segunda",
           startTime: "17h",
           endTime: "18h",
-          totalHours: 20,
+          totalHours: "40",
           durationWeeks: "15",
         },
       };
@@ -144,13 +141,12 @@ describe("SubjectController", () => {
         "subj1",
         "Matemática",
         "Matemática básica",
-        40,
-        "SEGUNDA",
+        "Segunda",
         "08:00",
         "10:00",
         "4",
-        { id: "prof1", name: "Professor X" },
-        [{ id: "vol1", name: "Voluntário Y" }]
+        { id: "prof1", name: "Professor Douglas" },
+        [{ id: "vol1", name: "Voluntário Matheus" }]
       );
 
       mockSubjectService.getById.mockResolvedValue({
@@ -191,7 +187,6 @@ describe("SubjectController", () => {
           weekdays: "3",
           startTime: "1",
           endTime: "1",
-          totalHours: 20,
           durationWeeks: "2",
         },
       };
@@ -206,7 +201,6 @@ describe("SubjectController", () => {
         weekdays: "3",
         startTime: "1",
         endTime: "1",
-        totalHours: 20,
         durationWeeks: "2",
       });
       expect(statusMock).toHaveBeenCalledWith(HttpStatus.OK);
@@ -222,7 +216,7 @@ describe("SubjectController", () => {
           weekdays: "3",
           startTime: "1",
           endTime: "1",
-          totalHours: 20,
+          totalHours: "40",
           durationWeeks: "2",
         },
       };

@@ -17,6 +17,7 @@ jest.mock('tsyringe', () => {
                 listen: mockListen,
               }),
             };
+          case 'ResendConfiguration':
           case 'DatabaseConfiguration':
           case 'RouteConfiguration':
             return {};
