@@ -16,7 +16,7 @@ export default class SubjectRouter implements Router {
   get = (): express.Router => {
     const router = express.Router({ mergeParams: true });
     router.post("/", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.subjectController.create);
-    router.get("/", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.ensureProfessorSubjectOrVolunteerAssociatedMiddleware.validate(), this.subjectController.getAllProfessorSubjects);
+    router.get("/", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.subjectController.getAllProfessorSubjects);
     router.get("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR", "VOLUNTEER"]), this.ensureProfessorSubjectOrVolunteerAssociatedMiddleware.validate(), this.subjectController.getById);
     router.patch("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.ensureProfessorSubjectOrVolunteerAssociatedMiddleware.validate(), this.subjectController.updateById);
     router.delete("/:subjectId", this.authorizationMiddleware.authorize(["ADMIN", "PROFESSOR"]), this.ensureProfessorSubjectOrVolunteerAssociatedMiddleware.validate(), this.subjectController.deleteById);
