@@ -185,7 +185,7 @@ export class SubjectService {
           subjectId: subject.id,
         },
       })
-      if (!hourlogs.length) return new NoAttendanceRecordsError(studentId, subject.id);
+      if (!hourlogs.length) return 0;
       const [startHour, startMinute] = subject.startTime.split(":").map(Number);
       const [endHour, endMinute] = subject.endTime.split(":").map(Number);
       const startTime = new Date(2000, 0, 1, startHour, startMinute);
