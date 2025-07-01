@@ -11,7 +11,7 @@ export default class UserRouter implements Router {
   constructor(
     private readonly userController: UserController,
     private readonly authorizationMiddleware: AuthorizeMiddleware,
-    private readonly ensureSameUserOrAdminMiddleware: EnsureSameUserOrAdminMiddleware
+    private readonly ensureSameUserOrAdminMiddleware: EnsureSameUserOrAdminMiddleware,
   ) {}
 
   get = (): express.Router => {
