@@ -16,11 +16,11 @@
  - Configure o ambiente:  
   `cp .env.example .env`  
  - Edite o arquivo .env com todas as configurações necessárias:
-   - `SERVER\_PORT=` Define a porta em que o servidor irá escutar. Exemplo: 3000, 8080
-   - `LOGGING\_LEVEL=` Define o nível de verbosidade dos logs, usado por bibliotecas como o Pino. Exemplo: info, debug, error, warn.
-   - `JWT\_SECRET=` Chave secreta usada para assinar e verificar tokens JWT. 
-   - `JWT\_EXPIRES\_IN=` Tempo de expiração dos tokens JWT. Exemplo: 1h, 7d, 60m.
-   - `RESEND\_API\_KEY=` Chave da API do serviço Resend, usado para envio de e-mails.
+   - `SERVER_PORT=` Define a porta em que o servidor irá escutar. Exemplo: 3000, 8080
+   - `LOGGING_LEVEL=` Define o nível de verbosidade dos logs, usado por bibliotecas como o Pino. Exemplo: info, debug, error, warn.
+   - `JWT_SECRET=` Chave secreta usada para assinar e verificar tokens JWT. 
+   - `JWT_EXPIRES_IN=` Tempo de expiração dos tokens JWT. Exemplo: 1h, 7d, 60m.
+   - `RESEND_API_KEY=` Chave da API do serviço Resend, usado para envio de e-mails.
 
 ## Executando o Projeto:  
    - Use o comando completo que executa todos os passos necessários:  
