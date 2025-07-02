@@ -1,13 +1,11 @@
 # Projeto Backend
 
 ## Pré-requisitos:
-
  - Node.js (versão 20.13.1)
  - npm ou yarn
  - Banco de dados configurado (verifique o arquivo .env e prisma/schema.prisma)
 
 ## Configuração Inicial:
-
  - Clone o repositório:  
   `git clone [seu-repositório]`  
   `cd back-end`   
@@ -17,7 +15,12 @@
 
  - Configure o ambiente:  
   `cp .env.example .env`  
- - Edite o arquivo .env com suas configurações de banco de dados
+ - Edite o arquivo .env com todas as configurações necessárias:
+   - `SERVER\_PORT=` Define a porta em que o servidor irá escutar. Exemplo: 3000, 8080
+   - `LOGGING\_LEVEL=` Define o nível de verbosidade dos logs, usado por bibliotecas como o Pino. Exemplo: info, debug, error, warn.
+   - `JWT\_SECRET=` Chave secreta usada para assinar e verificar tokens JWT. 
+   - `JWT\_EXPIRES\_IN=` Tempo de expiração dos tokens JWT. Exemplo: 1h, 7d, 60m.
+   - `RESEND\_API\_KEY=` Chave da API do serviço Resend, usado para envio de e-mails.
 
 ## Executando o Projeto:  
    - Use o comando completo que executa todos os passos necessários:  
@@ -29,7 +32,6 @@
      - Iniciar o servidor em modo desenvolvimento
 
 ## Scripts Disponíveis:
-
   `npm run start:dev - Configura e inicia o servidor (recomendado para desenvolvimento)`  
   `npm run dev - Apenas inicia o servidor (sem configurar o banco)`    
   `npm run setup - Apenas configura o banco (migrations + generate + seed)`    
